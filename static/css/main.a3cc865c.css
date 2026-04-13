@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimized Web Experience</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            overscroll-behavior: none;
+            touch-action: manipulation;
+        }
+        code {
+            font-family: 'source-code-pro', Menlo, Monaco, Consolas, 'Courier New', monospace;
+        }
+        #root {
+            margin: 0;
+            padding: 0;
+            will-change: transform;
+        }
+        .eac-screen-content {
+            background: transparent !important;
+        }
+        canvas {
+            background: transparent !important;
+        }
+        .eac-screen-content {
+            align-items: center;
+            color: #fff;
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+            left: 0;
+            position: fixed;
+            top: 0;
+            width: 100vw;
+            will-change: transform;
+        }
+        .eac-screen-content-box {
+            text-align: center;
+            width: 90vw;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .eac-title {
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+            font-size: clamp(2rem, 8vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        .eac-desc,
+        .eac-sm {
+            font-weight: 700;
+            opacity: 0.6;
+        }
+        .eac-desc {
+            font-size: clamp(1rem, 4vw, 1.8rem);
+            margin-bottom: 0.5rem;
+        }
+        .eac-sm {
+            font-size: clamp(0.7rem, 3vw, 1rem);
+        }
+        .eac-status {
+            font-size: clamp(1.5rem, 5vw, 2.6rem);
+            line-height: 1.2;
+            font-weight: 800;
+            opacity: 1;
+            color: #fff;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.75);
+            background: rgba(0, 0, 0, 0.28);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 14px 22px;
+            display: inline-block;
+            backdrop-filter: blur(2px);
+        }
+        .eac-title span {
+            background: #000;
+            border-radius: 5px;
+            color: #0e0e0e;
+            font-size: 0.875rem;
+            font-weight: 700;
+            padding: 5px 10px;
+            margin-top: 10px;
+        }
+        .eac-title span b {
+            color: #ffffff9f;
+        }
+        .fps,
+        .gui,
+        .update {
+            position: fixed;
+        }
+        .fps {
+            bottom: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            left: 10px;
+            opacity: 0.5;
+        }
+        .gui {
+            left: 0;
+            top: 0;
+            z-index: 999;
+        }
+        .gui:before {
+            background-color: transparent;
+            content: "";
+            height: 100%;
+            position: absolute;
+            width: 100%;
+        }
+        .gui-main button {
+            margin: 1px;
+        }
+		.spectated {
+		  left: 55px;
+		  opacity: 1;
+		  width: auto;
+		  max-width: none;
+		  white-space: nowrap;
+
+		  background: rgba(0,0,0,0.85);
+		  padding: 4px 12px 2px;
+		  border-radius: 10px;
+		  box-shadow: 0 2px 10px rgba(0,0,0,0.45);
+		  display: flex;
+		  gap: 8px;
+		  align-items: center;
+		}
+		.spectated .lable,
+		.spectated .value {
+		  color: #ff2d2d !important;
+		  font-weight: 900;
+		  font-size: 24px !important;
+		  line-height: 1;
+		  text-shadow: 0 0 6px rgba(0,0,0,.5);
+		  margin: 0;
+		  padding: 0;
+		}
+
+		.button-span {
+		  height: 35px;
+		  left: 10px;
+		  width: 35px;
+		}
+
+		.spectated.lable {
+		  background: transparent !important;
+		  box-shadow: none !important;
+		  border: none !important;
+		  font-size: inherit;
+		  font-weight: inherit;
+		  padding: 0;
+		  position: relative;
+		}
+.spectated.lable {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  font-size: inherit;
+  font-weight: inherit;
+  padding: 0;
+  position: relative;
+}
+        .spectated.lable span {
+            align-items: center;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            font-size: 12px;
+            left: 2px;
+            opacity: 0.3;
+            position: absolute;
+        }
+        .spectated.value {
+            flex: 1 1;
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+        }
+        .Mui-checked,
+        .Mui-selected {
+            color: #20aeff !important;
+        }
+        .MuiInput-root:after {
+            border-bottom-color: #20aeff !important;
+        }
+        .update {
+            bottom: 0;
+            right: 0;
+        }
+
+        /* Optimizations */
+        img, canvas {
+            max-width: 100%;
+            height: auto;
+            vertical-align: middle;
+        }
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+        button, input, select, textarea {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <div class="eac-screen-content">
+            <div class="eac-screen-content-box">
+                <div class="eac-title">
+                    Your Content
+                    <span><b>v1.0</b> ALPHA</span>
+                </div>
+                <div class="eac-desc">Optimized Experience</div>
+                <div class="eac-sm">Mobile-first design</div>
+            </div>
+        </div>
+        
+        <div class="fps">60 FPS</div>
+        
+        <div class="gui">
+            <div class="button-span"></div>
+            <div class="spectated lable">
+                Menu
+                <span>▼</span>
+            </div>
+            <div class="spectated value"></div>
+        </div>
+        
+        <div class="update">Update available</div>
+    </div>
+
+    <script>
+        // Performance optimizations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Use passive event listeners where possible
+            const options = {
+                passive: true,
+                capture: true
+            };
+            
+            window.addEventListener('scroll', function() {}, options);
+            window.addEventListener('resize', function() {}, options);
+            
+            // Optimize FPS display
+            let fpsDisplay = document.querySelector('.fps');
+            let lastTimestamp = performance.now();
+            let frameCount = 0;
+            let fps = 0;
+            
+            function updateFPS(timestamp) {
+                frameCount++;
+                
+                if (timestamp - lastTimestamp >= 1000) {
+                    fps = Math.round((frameCount * 1000) / (timestamp - lastTimestamp));
+                    frameCount = 0;
+                    lastTimestamp = timestamp;
+                    fpsDisplay.textContent = `${fps} FPS`;
+                }
+                
+                requestAnimationFrame(updateFPS);
+            }
+            
+            requestAnimationFrame(updateFPS);
+            
+            // Mobile touch optimizations
+            let startY;
+            
+            document.addEventListener('touchstart', function(e) {
+                startY = e.touches[0].clientY;
+            }, { passive: true });
+            
+            document.addEventListener('touchmove', function(e) {
+                const y = e.touches[0].clientY;
+                // Prevent pull-to-refresh
+                if (window.scrollY === 0 && y > startY + 10) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+        });
+        
+        // Load critical styles first
+        if ('requestIdleCallback' in window) {
+            window.requestIdleCallback(loadNonCriticalResources, { timeout: 2000 });
+        } else {
+            setTimeout(loadNonCriticalResources, 500);
+        }
+        
+        function loadNonCriticalResources() {
+            // Load non-critical resources here
+        }
+		
+		/* Global Verdana (apply everywhere, avoiding icon fonts) */
+		:root, html, body, #root,
+		body *:not(i):not([class*="icon"]):not([class*="fa-"]):not(.material-icons) {
+		  font-family: Verdana, Geneva, Tahoma, sans-serif !important;
+		}
+	
+
+	
+    </script>
+</body>
+</html>
+
+
+/* === Overrides added: Global Verdana + Spectators styling === */
+/* Global Verdana (apply everywhere, avoiding icon fonts) */
+:root, html, body, #root,
+body *:not(i):not([class*="icon"]):not([class*="fa-"]):not(.material-icons) {
+  font-family: Verdana, Geneva, Tahoma, sans-serif !important;
+}
+
+/* Spectators widget: black box, compact bottom padding, red bold text */
+.spectated {
+  left: 55px;
+  opacity: 1;
+  width: auto;
+  max-width: none;
+  white-space: nowrap;
+
+  background: rgba(0,0,0,0.85);
+  padding: 4px 12px 2px; /* tighter bottom */
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.45);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.spectated .lable,
+.spectated .value {
+  color: #ff2d2d !important;
+  font-weight: 900;
+  font-size: 24px !important;
+  line-height: 1;
+  text-shadow: 0 0 6px rgba(0,0,0,.5);
+  margin: 0;
+  padding: 0;
+}
